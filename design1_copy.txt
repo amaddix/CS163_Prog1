@@ -1,0 +1,126 @@
+
+	Ashley Maddix, CS 162, Spring 2018
+	Design for program 1
+
+
+	1)What functions your ADT will need to have
+
+	As of now, I plan to have 10 functions dealing with my abstract data type.
+
+	* each of these functions will use a common general pointer for head, so that 'which'
+	head (whether its for the pizza_type list or topping list) it can be used the same.
+			
+		a) FIND-I will have a function to to traverse through a linear linked list, 
+		until I have found a match to the name (of pizza) sent in from user. 
+
+		This function will be used to when displaying the toppings under a specific pizza, 
+		remove a topping from this specific pizza, and adding a topping to a specific pizza 
+		(to find specific pizza).
+		
+		b) SORT- Another function will take a name of a pizza (read in 
+		from the user in main (?) and passed by value), and will check if there is 
+		any nodes in either the pizza_type list. If there isnt then it will add it to 
+		the beggining. If there is, then it will traverse a current and previous pointer 
+		until it has either found a current value that is larger then the name of the new
+		pizza type, or found a current value matching (==) name. If it found a larger 
+		current, then it will assign temp's next to current and previous's next to temp.
+		If it found a match instead, then it will return a '0' to main to show that this 
+		pizza type has already been entered.
+
+		This function will be used to add a new type of pizza to our pizza_type
+		linear linked list.
+
+		c)DISPLAY- I will have a recusive function that will display all the nodes data
+		from a the pizza_type linear liked list. 
+
+		This function will be used when displaying the list of pizza types.
+
+		d) ADD NEW PIZZA TYPE- this funtion will get passed the name that the user would
+		like to name the pizza. It will then set that value to a pizza_type temp node.
+		Then it will call the SORT function, to add temp in the correct place. Once this
+		function is done running it will return a value to show if we successfully added
+		this new pizza type in our list, or if there was a pre-existing pizza with this
+		name.
+
+		e)REMOVE TOPPING FROM PARTICULAR PIZZA- this function will get passed the name 
+		of the pizza they would like to delete a topping from. It will then set save that
+		value as a temp pointer. Then call FIND, to find the pizza they would like to 
+		delete from. It will then return whether it was found or not. If true, then it
+		will procced to get passed the name of the name of the topping they would like 
+		to delete. It will then re-assign temp to this value. Then traverse through the
+		list of toppings, stopping either when the value was found or it has reached the
+		end of the list. If it has reached the end of the list without findind a match, 
+		then it will return a 0 to main to show this. Otherwise, the match was found, and 
+		currently assigned to a 'current' pointer. Previous's next will then equal 
+		current's next, and current will be deleted.  
+		
+		f) ADD TOPPING FOR PARTICULAR PIZZA- this function will get passed the name
+		of the pizza they would like to add a topping to. It will then save this value 
+		in a temp pointer. Then call FIND, returning a value to show if it was found.  
+		If true, then it will be passed the name of the topping they would like to add 
+		along with the information about that topping (which will go into the topping_info 
+		struct). It will then re-assign temp as this value. Then it will traverse current 
+		though the pizza_topping list until it has either found a current larger then temp
+		or until it finds a current == to temp. If there is a match, then it will return a
+		0 to show that there was already this topping. Otherwise it will be added between 
+		previous and current.
+
+		g)DISPLAY LIST OF PIZZA TYPES- this function will be done recursivly, and will 
+		pass in the piza_type_head. It will test each time if head == to null. If it is 
+		not, then it will output head. Then call the function_name(head->next). 
+
+		h)DISPLAY LIST OF PIZZA TYPES WRAPER- a wraper function for my function to 
+		display all the pizza in my list.
+
+		i)DISPLAY ALL TOPPINGS FOR A PARTICULAR PIZZA- this funciton will get passed which 
+		pizza they would like contents displayed to. Then that value will be set to a
+		temp pointer. Then call FIND (returning a value to show whether it was found
+		or not, procceding if true). Then it will traverse current until current == null
+		( outputting current each loop through).
+
+		j) CONSTRUCTOR- This will be used to initial the data members of my class, which 
+		should consist of a pointer to the head of the piza_type list. I will also have 
+		a pointer to another pizza_type, called 'current' to save the current place in 
+		my pizza_type list (which will be used when adding/ removing / displaying a
+		topping from a specific pizza).
+		
+		k) DESTRUCTOR- Will delete the memory allocated in our class.
+		
+
+	2)How each function will report success/failure back to the calling routine
+
+		Each function will be of int type. With each function call will be a value 
+		('worked'), that will save that value. Following that function call will have 
+		an if statment to test if things didnt go as planned (leading to the output of
+		a error message), or if thing went well (leading to the next prompt, if needed).
+
+	3)How each function will shield the client program from the details of the data structure
+
+		The 'application' part of my program will only use a few varibles, used to read in
+		the users input. These varibles will be passed into my ADT functions, and this 
+		saved into the correct format to be used with those functions.
+
+	4)What data structures you will be using and how each of the special cases. 
+	Consider drawing pointer diagrams with “before” and “after” diagrams for each special case.
+	
+		I will be creating a linear linked list for the different pizza types. Each node
+		will have a char pointer for its name, pointer of type pizza_type to point to the
+		next value, and a pointer of type pizza_topping which will point to a new node
+		type. The pizza_topping node will have a char pointer for its name, a pizza_topping
+		pointer to point to the next value in the list, and a struct pointer to point to 
+		a struct which will contain the information about the topping. 
+
+	
+	Each major  design issue  should  be described. In the design considerations, discuss what 
+	the  main design considerations are, why they are the main design considerations, how you 
+	solved them, and why you solved the way you did. 			
+
+	-When thinking about my design, I noticed that many of the actions my program preformed
+	would repeat each other (display pizza type, display pizza topping). So I initially
+	planned to make 3 general functions that would work to display, find, and sort. However
+	I realized that I would be hard to make these general enough to switch back and fourth 
+	between two different struct types. 
+
+	In the end I decided that it made the most sense ( with my level of knowlege) to just 
+	make those three general functions specifially for pizza_types (not pizza_toppings).
+	And just call those functions in the functions were I need them. 

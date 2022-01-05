@@ -1,0 +1,98 @@
+
+	Ashley Maddix, CS 162, Spring 2018
+	Design for program 1
+
+
+	1)What functions your ADT will need to have
+
+	As of now, I plan to have 10 functions dealing with my abstract data type.
+
+	* each of these functions will use a common general pointer for head, so that 'which'
+	head (whether its for the pizza_type list or topping list) it can be used the same.
+			
+		a) FIND-I will have a function to to traverse through a linear linked list, 
+		until I have found a match to the name (of either a pizza or topping) 
+		sent in from user. 
+
+		This function will be used to when adding a pizza to a specific pizza, 
+		when displaying the toppings under a specific pizza, remove a topping from 
+		this specific pizza (for finding that specific pizza, and again to check that
+		this topping is in the topping list), and adding a topping to a specific pizza 
+		(to find specific pizza, and again to check that topping doesnt already exist in
+		list).
+		
+		b) SORT- Another function will take a name (of a pizza or topping)(read in 
+		from the user in main (?) and passed by value), and will check if there is 
+		any nodes in either the pizza_type list or topping list (depending on if 
+		were adding a pizza type or topping). If there isnt then it will add it to 
+		the beggining. If there is, then it will traverse a current and previous pointer 
+		until it have found a current value that is larger then the name of the new
+		pizza type/ topping. Once it is done traversing it will assign temp's next to 
+		current and previous's next to temp.
+
+		This function will be used to add a new type of pizza to our pizza_type
+		linear linked list, and to add a new topping to a topping list.
+
+		c)DISPLAY- I will have a recusive function that will display all the nodes data
+		from a linear liked list. 
+
+		This function will be used when displaying the list of pizza types, and displaying
+		the topping/topping information for a specific pizza.
+
+		d) ADD NEW PIZZA TYPE- this funtion will get passed the name that the user would
+		like to name the pizza. It will then set the head node = to the pizza_list_head
+		Then it will call the FIND function, to see if name == and of the data in the 
+		pizza_list. I will return whether there was a pre-existing node with this data.
+		If I returned false, then it will call the SORT function, to add the new node
+		in the correct place. 
+
+		e)REMOVE TOPPING FROM PARTICULAR PIZZA- this function will get passed the name 
+		of the pizza they would like to delete a topping from. It will then set head =
+		to the pizza_type_head. Then call FIND, to find the pizza they would like to 
+		delete from. It will then return whether it was found or not. If true, then it
+		will procced to get passed the name of the name of the topping they would like 
+		to delete. It will then set head= to topping_head. Then call FIND (again, 
+		returing a value to show whether name was found, procceding if it was true). 
+		It will then///////////////////// 
+		
+		////how will I save current and previous when I come back from find??	
+
+
+		f) ADD TOPPING FOR PARTICULAR PIZZA- this function will get passed the name
+		of the pizza they would like to add a topping to. It will then save head = to
+		pizza_type_head. Then call FIND, returning a value to show if it was found. If 
+		true, then it will be passed the name of the topping they would like to add along
+		with the information about that topping (which will go into the topping_info 
+		struct). It will save this information into the pizza_topping list. 
+		It will then call FIND, to make sure that this topping isnt already
+		listed. If false, then it will call SORT to add this topping into the corrent
+		place in the topping list. 
+		
+		g)DISPLAY LIST OF PIZZA TYPES- this function will set head = to pizza_list_head
+		and then call the DISPLAY fucntio.
+		
+		h)DISPLAY ALL TOPPINGS FOR A PARTICULAR PIZZA- this funciton will get passed  which 
+		pizza they would like to contents displayed to. Then it will set head = to
+		pizza_type_head. Then call FIND (returning a value to show whether it was found
+		or not, procceding if true). Then set head = to topping_head and calling DISPLAY.
+
+		i) CONSTRUCTOR- This will be used to initial the data members of my class, which 
+		should consist of a node of type 'pizza_type_head' (?), it may also use a temp....
+		////////////////
+		
+		j) DESTRUCTOR-
+		
+
+	2)How each function will report success/failure back to the calling routine
+		Each function will be of int type. With each function call will be a value 
+		('worked'), that will save that value. Following that function call will have 
+		an if statment to test if things didnt go as planned (leading to the output of
+		a error message), or if thing went well (leading to the next prompt, if needed).
+
+	3)How each function will shield the client program from the details of the data structure
+		The 'application' part of my program will only use a few varibles, used to read in
+		the users input. These varibles will be passed into my ADT functions, and this 
+		saved into the correct format to be used with those functions.
+
+///////////////////////
+	4)What data structures you will be using and how each of the special cases. Consider drawing pointer diagrams with “before” and “after” diagrams for each special case.
