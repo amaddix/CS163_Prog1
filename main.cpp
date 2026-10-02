@@ -156,6 +156,8 @@ int get_pizza_name(char * & user_type)
 	//allocate memory, and save temp into user_type
 	user_type= new char[strlen(temp)+1];
 	strcpy (user_type, temp);
+
+	return 1;
 	
 }
 
@@ -198,5 +200,7 @@ int get_topping( char * & user_type, topping_info & user_info)
 	//allocate memory, and save temp into info. surcharge
 	user_info.surcharge= new char [ strlen ( temp) +1];
 	strcpy (user_info.surcharge, temp);
+
+	return 1;
 }
 
