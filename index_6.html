@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pizza Manager</title>
+<style>
+  :root { --bg:#fff8f0; --card:#fff; --ink:#2b2118; --muted:#7a6a5c; --accent:#c8321e; --line:#ecdccb; --ok:#2e7d32; --bad:#b3261e; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background:var(--bg); color:var(--ink); }
+  header { background:var(--accent); color:#fff; padding:20px 16px; text-align:center; }
+  header h1 { margin:0; font-size:1.6rem; }
+  header p { margin:4px 0 0; opacity:.9; font-size:.95rem; }
+  main { max-width:960px; margin:0 auto; padding:16px; display:grid; gap:16px; grid-template-columns:1fr 1fr; }
+  @media (max-width:760px) { main { grid-template-columns:1fr; } }
+  section { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px; }
+  section.wide { grid-column:1 / -1; }
+  h2 { margin:0 0 12px; font-size:1.1rem; }
+  label { display:block; font-size:.85rem; color:var(--muted); margin:10px 0 4px; }
+  input { width:100%; padding:9px 10px; border:1px solid var(--line); border-radius:8px; font-size:1rem; background:#fff; color:var(--ink); }
+  input:focus { outline:2px solid var(--accent); outline-offset:1px; }
+  button { margin-top:12px; padding:9px 16px; border:0; border-radius:8px; background:var(--accent); color:#fff; font-size:.95rem; cursor:pointer; }
+  button.secondary { background:#fff; color:var(--accent); border:1px solid var(--accent); }
+  button:hover { filter:brightness(1.08); }
+  .row { display:flex; gap:8px; align-items:end; flex-wrap:wrap; }
+  .row > div { flex:1; min-width:140px; }
+  .row button { margin-top:0; }
+  #status { position:sticky; top:0; z-index:5; margin:0 auto; max-width:960px; padding:0 16px; }
+  #status div { margin-top:12px; padding:10px 14px; border-radius:8px; font-size:.95rem; display:none; }
+  #status .ok { display:block; background:#e6f4e7; color:var(--ok); border:1px solid #bfdfc1; }
+  #status .bad { display:block; background:#fdeceb; color:var(--bad); border:1px solid #f1c3bf; }
+  ul.pizzas { list-style:none; padding:0; margin:12px 0 0; display:flex; flex-wrap:wrap; gap:8px; }
+  ul.pizzas li { background:#fff1e0; border:1px solid var(--line); border-radius:999px; padding:6px 14px; cursor:pointer; }
+  ul.pizzas li:hover { border-color:var(--accent); }
+  table { width:100%; border-collapse:collapse; margin-top:12px; }
+  th, td { text-align:left; padding:8px; border-bottom:1px solid var(--line); }
+  th { font-size:.8rem; text-transform:uppercase; color:var(--muted); }
+  .empty { color:var(--muted); margin-top:12px; font-style:italic; }
+</style>
+</head>
+<body>
+<header>
+  <h1>🍕 Pizza Manager</h1>
+  <p>Front end for the CS 163 pizza &amp; toppings linked lists</p>
+</header>
+<div id="status"><div id="msg"></div></div>
+
+<main>
+  <section>
+    <h2>1. Add a new pizza type</h2>
+    <label for="newPizza">Pizza name</label>
+    <input id="newPizza" maxlength="99" placeholder="e.g. Margherita">
+    <button id="addPizzaBtn">Add pizza</button>
+  </section>
+
+  <section>
+    <h2>2. Add a topping to a pizza</h2>
+    <label for="tPizza">Pizza name</label>
+    <input id="tPizza" maxlength="99" placeholder="Must already exist">
+    <label for="tName">Topping name</label>
+    <input id="tName" maxlength="99" placeholder="e.g. Basil">
+    <label for="tCat">Category</label>
+    <input id="tCat" maxlength="99" placeholder="e.g. Herb">
+    <label for="tSur">Surcharge ($)</label>
+    <input id="tSur" maxlength="99" placeholder="e.g. 0.50">
+    <button id="addToppingBtn">Add topping</button>
+  </section>
+
+  <section>
+    <h2>3. Remove a topping from a pizza</h2>
+    <label for="rPizza">Pizza name</label>
+    <input id="rPizza" maxlength="99">
+    <label for="rName">Topping to remove</label>
+    <input id="rName" maxlength="99">
+    <button id="removeBtn">Remove topping</button>
+  </section>
+
+  <section>
+    <h2>4. Pizza types</h2>
+    <button id="listBtn" style="margin-top:0">Display list of pizza types</button>
+    <div id="pizzaOut"></div>
+  </section>
+
+  <section class="wide">
+    <h2>5. Toppings for a pizza</h2>
+    <div class="row">
+      <div>
+        <label for="vPizza" style="margin-top:0">Pizza name</label>
+        <input id="vPizza" maxlength="99" placeholder="Type a name, or click a pizza above">
+      </div>
+      <button id="viewBtn">Display toppings</button>
+    </div>
+    <div id="toppingOut"></div>
+  </section>
+</main>
+
+<script>
+const $ = (id) => document.getElementById(id);
+let timer;
+
+function show(message, ok) {
+  const el = $('msg');
+  el.className = ok ? 'ok' : 'bad';
+  el.textContent = message;
+  clearTimeout(timer);
+  timer = setTimeout(() => { el.className = ''; }, 5000);
+}
+
+async function api(action, body) {
+  try {
+    const r = await fetch('/api/' + action, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body || {})
+    });
+    return await r.json();
+  } catch (e) {
+    return { ok: false, message: 'Could not reach the server. Is it running?' };
+  }
+}
+
+function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+async function refreshPizzas() {
+  const r = await api('pizzas');
+  const out = $('pizzaOut');
+  if (!r.ok) { out.innerHTML = ''; if (r.message) show(r.message, false); return; }
+  if (!r.pizzas.length) { out.innerHTML = '<p class="empty">Looks like there was nothing in your list!</p>'; return; }
+  out.innerHTML = '<ul class="pizzas">' + r.pizzas.map((p) => '<li data-name="' + esc(p).replace(/"/g, '&quot;') + '">' + esc(p) + '</li>').join('') + '</ul>';
+  out.querySelectorAll('li').forEach((li) => li.addEventListener('click', () => {
+    const name = li.getAttribute('data-name');
+    $('vPizza').value = name; $('tPizza').value = name; $('rPizza').value = name;
+    viewToppings();
+  }));
+}
+
+async function viewToppings() {
+  const pizza = $('vPizza').value;
+  const r = await api('toppings', { pizza });
+  const out = $('toppingOut');
+  if (!r.ok) { out.innerHTML = ''; show(r.message || 'Something went wrong.', false); return; }
+  if (!r.toppings.length) { out.innerHTML = '<p class="empty">Looks like there was nothing to display!</p>'; return; }
+  out.innerHTML = '<table><tr><th>Topping</th><th>Category</th><th>Surcharge</th></tr>' +
+    r.toppings.map((t) => '<tr><td>' + esc(t.name) + '</td><td>' + esc(t.category) + '</td><td>$' + esc(t.surcharge) + '</td></tr>').join('') + '</table>';
+}
+
+$('addPizzaBtn').onclick = async () => {
+  const r = await api('add_pizza', { pizza: $('newPizza').value });
+  show(r.message || 'Something went wrong.', r.ok);
+  if (r.ok) $('newPizza').value = '';
+  refreshPizzas();
+};
+
+$('addToppingBtn').onclick = async () => {
+  const r = await api('add_topping', { pizza: $('tPizza').value, name: $('tName').value, category: $('tCat').value, surcharge: $('tSur').value });
+  show(r.message || 'Something went wrong.', r.ok);
+  if (r.ok) { $('tName').value = ''; $('tCat').value = ''; $('tSur').value = ''; $('vPizza').value = $('tPizza').value; viewToppings(); }
+};
+
+$('removeBtn').onclick = async () => {
+  const r = await api('remove_topping', { pizza: $('rPizza').value, name: $('rName').value });
+  show(r.message || 'Something went wrong.', r.ok);
+  if (r.ok) { $('rName').value = ''; }
+  if (r.crashed) refreshPizzas();
+};
+
+$('listBtn').onclick = refreshPizzas;
+$('viewBtn').onclick = viewToppings;
+refreshPizzas();
+</script>
+</body>
+</html>
