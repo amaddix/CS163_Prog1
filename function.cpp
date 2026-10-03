@@ -212,7 +212,7 @@ int pizzas::display_pizza(pizza_type * head, int worked)
 	cout<<head->type_name<<endl;
 	//call this function using head's next value, and incease
 	// the number for 'worked' (which is equivalent to a count)
-	display_pizza(head->next, ++worked);
+	return display_pizza(head->next, ++worked);
 }
 
 // function to add toppings to a specific pizza
